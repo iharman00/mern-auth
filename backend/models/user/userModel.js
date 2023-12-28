@@ -21,6 +21,19 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Adds a method for matching password using bcryptjs
+userSchema.methods.matchPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+// Encrypts password using bcryptjs before saving to mongodb
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  this.password = await bcrypt.hash(this.password, 12);
+});
+
 const User = mongoose.model("User", userSchema);
 
 export default User;
