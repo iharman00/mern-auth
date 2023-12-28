@@ -22,8 +22,8 @@ const userSchema = new mongoose.Schema(
 );
 
 // Adds a method for matching password using bcryptjs
-userSchema.methods.matchPassword = async function (password) {
-  return await bcrypt.compare(password, this.password);
+userSchema.methods.matchPassword = async function (enteredpassword) {
+  return await bcrypt.compare(enteredpassword, this.password);
 };
 
 // Encrypts password using bcryptjs before saving to mongodb

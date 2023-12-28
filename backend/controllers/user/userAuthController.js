@@ -50,8 +50,8 @@ const loginUser = async (req, res, next) => {
 
     const user = await User.findOne({ email });
 
-    //   Generates a token including the userID and sends a cookie and response
-    if (user && user.matchPassword(password)) {
+    //   Verifies that the user exists, matches the password and issues a token
+    if (user && (await user.matchPassword(password))) {
       generateToken(res, user._id);
       return res.status(200).json({
         message: "Logged In successfully",
