@@ -10,9 +10,11 @@ const getUserData = async (req, res, next) => {
     }
 
     res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     next(error);
@@ -40,7 +42,7 @@ const updateUserData = async (req, res, next) => {
 
     res.status(200).json({
       message: "Details updated successfully",
-      updatdUser: {
+      updatedUser: {
         _id: updatedUser._id,
         name: updatedUser.name,
         email: updatedUser.email,

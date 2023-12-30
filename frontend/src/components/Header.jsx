@@ -12,12 +12,6 @@ const Header = () => {
 
   const { userInfo } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
-
   let userName = useSelector((state) => state.user.userInfo?.name);
   userName = userName?.split(" ")[0];
 
@@ -31,6 +25,7 @@ const Header = () => {
       const res = await dispatch(logoutUser()).unwrap();
       dispatch(logout());
       toast.success(res.message);
+      navigate("/");
     } catch (rejectedResponse) {
       toast.error(rejectedResponse.message);
     }
@@ -53,7 +48,10 @@ const Header = () => {
                 <FaAngleDown />
               </button>
               {showDropDown && (
-                <div className="absolute top-8 right-[-2rem] w-[140%] bg-slate-800 flex flex-col border-2 rounded-lg overflow-hidden transition-all">
+                <div
+                  onMouseLeave={toggleDropDown}
+                  className="absolute top-8 right-[-2rem] w-[140%] bg-slate-800 flex flex-col border-2 rounded-lg overflow-hidden transition-all"
+                >
                   <Link
                     to="/profile"
                     className="text-white hover:bg-slate-700 transition-colors py-2.5 px-3"
