@@ -8,7 +8,7 @@ const Root = () => {
     <>
       <ToastContainer />
       <Header />
-      <main>
+      <main className="w-full px-5 md:px-0">
         <Outlet />
       </main>
     </>
