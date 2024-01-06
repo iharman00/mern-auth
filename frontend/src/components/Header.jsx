@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { logoutUser, logout } from "../features/user/userSlice";
+import { useLogoutUserMutation } from "../features/user/userApiSlice";
+import { logout } from "../features/user/userSlice";
 import { FaArrowRightToBracket, FaAngleDown } from "react-icons/fa6";
 
 const Header = () => {
@@ -20,14 +21,16 @@ const Header = () => {
     setShowDropDown((showDropDown) => !showDropDown);
   };
 
+  const [logoutUser] = useLogoutUserMutation();
+
   const handleLogout = async () => {
     try {
-      const res = await dispatch(logoutUser()).unwrap();
+      const res = await logoutUser().unwrap();
       dispatch(logout());
       toast.success(res.message);
       navigate("/");
-    } catch (rejectedResponse) {
-      toast.error(rejectedResponse.message);
+    } catch (error) {
+      toast.error(error.data.message);
     }
   };
 

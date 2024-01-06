@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
-import { loginUser, setCredentials } from "../features/user/userSlice";
+import { useLoginUserMutation } from "../features/user/userApiSlice";
+import { setCredentials } from "../features/user/userSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -13,7 +14,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { userInfo } = useSelector((state) => state.user);
-  const isLoading = useSelector((state) => state.user.loading);
 
   useEffect(() => {
     if (userInfo) {
@@ -21,19 +21,20 @@ const Login = () => {
     }
   }, [navigate, userInfo]);
 
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await dispatch(
-        loginUser({
-          email,
-          password,
-        })
-      ).unwrap();
+      const res = await loginUser({
+        email,
+        password,
+      }).unwrap();
       dispatch(setCredentials(res.user));
       toast.success(res.message);
-    } catch (rejectedResponse) {
-      toast.error(rejectedResponse.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.data.message);
     }
   };
 

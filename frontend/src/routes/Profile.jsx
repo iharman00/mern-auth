@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
-import { updateUser, setCredentials } from "../features/user/userSlice";
+import { useUpdateUserMutation } from "../features/user/userApiSlice";
+import { setCredentials } from "../features/user/userSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ const Profile = () => {
     }
   }, [userInfo?.name, userInfo?.email]);
 
-  const isLoading = useSelector((state) => state.user.loading);
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -31,17 +32,16 @@ const Profile = () => {
       return toast.error("Passwords do not match");
     }
     try {
-      const res = await dispatch(
-        updateUser({
-          name,
-          email,
-          password,
-        })
-      ).unwrap();
+      const res = await updateUser({
+        name,
+        email,
+        password,
+      }).unwrap();
       dispatch(setCredentials(res.updatedUser));
       toast.success(res.message);
-    } catch (rejectedResponse) {
-      toast.error(rejectedResponse.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.data.message);
     }
   };
 

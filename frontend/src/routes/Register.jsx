@@ -3,7 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
-import { registerUser, setCredentials } from "../features/user/userSlice";
+import { useRegisterUserMutation } from "../features/user/userApiSlice";
+import { setCredentials } from "../features/user/userSlice";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,6 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const { userInfo } = useSelector((state) => state.user);
-  const isLoading = useSelector((state) => state.user.loading);
 
   useEffect(() => {
     if (userInfo) {
@@ -23,23 +23,23 @@ const Register = () => {
     }
   }, [navigate, userInfo]);
 
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       return toast.error("Passwords do not match");
     }
     try {
-      const res = await dispatch(
-        registerUser({
-          name,
-          email,
-          password,
-        })
-      ).unwrap();
+      const res = await registerUser({
+        name,
+        email,
+        password,
+      }).unwrap();
       dispatch(setCredentials(res.user));
       toast.success(res.message);
-    } catch (rejectedResponse) {
-      toast.error(rejectedResponse.message);
+    } catch (error) {
+      toast.error(error.data.message);
     }
   };
 
